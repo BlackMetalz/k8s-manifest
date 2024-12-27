@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-container
+        image: nginx
+        ports:
+        - containerPort: 80
+        env:
+        - name: DB_USERNAME
+          value: "<path:kienlt-cicd/data/myapp#username>"
+        - name: DB_PASSWORD
+          value: "<path:kienlt-cicd/data/myapp#password>"

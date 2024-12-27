@@ -1,0 +1,35 @@
+namespace: python-app
+service:
+  type: ClusterIP
+  port: 5000
+replicaCount: "4"
+resources:
+  requests:
+    memory: 200Mi
+    cpu: 200m
+  limits:
+    memory: 400Mi
+    cpu: 400m
+image:
+  repository: kienlt992/python-api-app
+  tag: v0.0.8
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: python-api-app.rke2-cluster.kienlt.local
+      paths:
+        - path: /
+          pathType: Prefix
+vault:
+  secretPath: kienlt-cicd/data/python-api-app/production
+secrets:
+  config.ini: <config.ini>
+volumeMounts:
+  - name: config-volume
+    mountPath: /app/config.ini
+    subPath: config.ini
+volumes:
+  - name: config-volume
+    secret:
+      secretName: python-api-app-production-secrets
