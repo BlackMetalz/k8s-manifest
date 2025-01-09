@@ -1,0 +1,43 @@
+@Library('jenkins-global-lib') _
+
+helmPipeline {
+    // Repository Define. Required
+    repo = "git@github.com:BlackMetalz/Golang-Webapp-Testing.git"
+    namespace = "golang-app"
+    // Service Define. Required
+    servicePort = 8080
+    // serviceType = "ClusterIP" // This should be default
+    ingress = [
+        "development": [
+            "host": "golang-webapp-testing.rke1-cluster.kienlt.local",
+            "path": "/"
+        ],
+        "production": [
+            "host": "golang-webapp-testing.rke2-cluster.kienlt.local",
+            "path": "/"
+        ]
+    ]
+    // Resources Define. Required
+    resources = [
+        "development": [
+            replicaCount: 1,
+            cpuRequest: "100m",
+            cpuLimit: "200m",
+            memoryRequest: "100Mi",
+            memoryLimit: "200Mi",
+            k8sCluster: "kienlt-rke1-development"
+        ],
+        "production": [
+            replicaCount: 1,
+            cpuRequest: "200m",
+            cpuLimit: "400m",
+            memoryRequest: "200Mi",
+            memoryLimit: "400Mi",
+            k8sCluster: "kienlt-rke2-production"
+        ]
+    ]
+    // Secret (optional)
+    // secret = "config.ini" // Support only 1 secret now!
+    // secretPath = "kienlt-cicd"
+    // secretLocation = "/app"
+}
