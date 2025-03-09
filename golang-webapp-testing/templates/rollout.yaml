@@ -1,5 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: {{ include "golang-webapp-testing.fullname" . }}
   labels:
@@ -70,3 +70,10 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  strategy:
+      canary:
+        steps:
+          - setWeight: 25  # 25% traffic to new version (with replica count 4, 1 pod will be updated)
+          - pause: { duration: 300s }  # wait 5 minutes before next step
+          - setWeight: 50  #  50% traffic to new version
+          - pause: {}  # wait indefinitely for manual approval
